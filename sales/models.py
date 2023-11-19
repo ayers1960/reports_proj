@@ -46,7 +46,7 @@ class Sale(models.Model):
             self.created = timezone.now()
         return super().save(*args, **kwargs)
 
-    def get_postions(self):
+    def get_positions(self):
         return self.positions.all()
 
     def __str__(self):
