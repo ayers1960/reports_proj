@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-
+import pandas as pd
 from .models import Sale
 from .forms import SalesSearchForm
 
@@ -14,7 +14,11 @@ def home_view(request):
         date_to   = request.POST.get('date_to')
         chart_type = request.POST.get('chart_type')
         print(f"{date_from} => {date_to}  {chart_type}")
-
+        qs = Sale.objects.filter(created__date=date_from)
+        df1 = pd.DataFrame(qs.values())
+        print(df1)
+    
+    
     context = {
         'form' : form
     }
