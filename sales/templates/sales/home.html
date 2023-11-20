@@ -24,6 +24,9 @@ home
     <hr>
     grouped by df
     {{df | safe}}    
+    <hr>
+    Chart
+    <img src="data:image/png;base64, {{chart|safe}}">
  {% else %}
    <h3>No Data</h3>
  {% endif %}
