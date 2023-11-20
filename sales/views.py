@@ -11,6 +11,7 @@ def home_view(request):
     sales_df     = None
     positions_df = None
     merged_df    = None
+    df           = None
     form = SalesSearchForm(request.POST or None)
 
     if request.method == 'POST':
@@ -49,9 +50,13 @@ def home_view(request):
             positions_df = pd.DataFrame(positions_data) 
             merged_df = pd.merge(sales_df, positions_df, on='sales_id')
 
+            df = merged_df.groupby('transaction_id', as_index=False)['price'].agg('sum')
+
+
             positions_df = positions_df.to_html()
             sales_df = sales_df.to_html()
             merged_df = merged_df.to_html()
+            df        = df.to_html()
         else:
             print('no data')
 
@@ -61,6 +66,7 @@ def home_view(request):
         'sales_df': sales_df,
         'positions_df': positions_df,
         'merged_df'   : merged_df,
+        'df'          : df,
     }
     return render(request, 'sales/home.html', context)
 
