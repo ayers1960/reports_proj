@@ -12,6 +12,26 @@ home
 
 {% block content %}
 
+<!-- Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
  <form action="" method="POST">
     {% csrf_token %}
     {{form|crispy}}
@@ -32,10 +52,17 @@ home
     {{df | safe}}    
     <hr>
     Chart
-    <img src="data:image/png;base64, {{chart|safe}}">
+    <img src="data:image/png;base64, {{chart|safe}}" id="img">
  {% else %}
    <h3>No Data</h3>
  {% endif %}
 
+ <button class="btn btn-primary not-visible "
+         id="report-btn"
+         data-bs-toggle="modal" 
+         data-bs-target="#reportModal"
+ > 
+   add report 
+ </button>
 
 {% endblock content %}
