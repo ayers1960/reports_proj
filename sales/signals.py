@@ -7,7 +7,7 @@ from django.dispatch import receiver
 def calculate_total_price(sender, instance, action, **kwargs):
     total_price = 0
     if action == 'post_add' or action == 'post_remove':
-        for item in instance.get_postions():
+        for item in instance.get_positions():
             total_price += item.price
     instance.total_price = total_price
     instance.save()
