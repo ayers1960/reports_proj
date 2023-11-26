@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from profiles.models import Profile
 from .forms import ReportForm
@@ -47,10 +47,12 @@ def create_report_view(request):
     return JsonResponse({})
 
 
-def render_pdf_view(request):
-    print("inside render_pdf_view")
+def render_pdf_view(request,pk):
     template_path = 'reports/pdf.html'
-    context = {'hello': 'Hello World!'}
+    obj = get_object_or_404(Report,pk=pk)
+    context = {
+        'obj': obj
+        }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
 

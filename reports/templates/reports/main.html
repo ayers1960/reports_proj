@@ -19,7 +19,7 @@ reports
           <a href="{{obj.get_absolute_url}}" class="btn btn-primary">
             details
           </a>          
-          <a href="" class="btn btn-danger">
+          <a href="{% url 'reports:pdf' obj.pk %}" class="btn btn-danger">
             pdf
           </a>          
         </div>
