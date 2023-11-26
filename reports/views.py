@@ -4,7 +4,7 @@ from profiles.models import Profile
 from .forms import ReportForm
 from .utils import is_ajax, get_report_image
 from .models import Report
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -20,6 +20,12 @@ class ReportListView(ListView):
 class ReportDetailView(DetailView):
     model = Report
     template_name = "reports/detail.html"
+
+class UploadTemplateView(TemplateView):
+    template_name = "reports/from_file.html"
+
+def csv_upload_view(request):
+    return HttpResponse()
 
 def create_report_view(request):
     form = ReportForm(request.POST or None)
