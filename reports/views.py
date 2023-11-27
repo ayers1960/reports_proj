@@ -12,6 +12,9 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 
 from sales.models import Sale, Position, CSV
+from products.models import Product
+from customers.models import Customer
+
 import csv
 from django.utils.dateparse import parse_date
 
@@ -37,13 +40,36 @@ def csv_upload_view(request):
         with open(obj.file_name.path, 'r')as f:
             reader = csv.DictReader(f,skipinitialspace=True,)
             for row in reader:
-                print(row,type(row))
                 transaction_id = row["Transaction id"]
                 product        = row["Product"]
                 quantity       = int(row["Quantity"])
                 customer       = row["Customer"]
                 date           = parse_date(row["Date"])
                 print(f"--->{transaction_id}/{product}/{quantity}/{customer}/{date}<----")
+
+                try:
+                    product_obj = Product.objects.get(name__iexact=product)
+                except Product.DoesNotExist:
+                    product_obj = None
+                
+                if product_obj is not None:
+                    customer_obj, _ = Customer.objects.get_or_create(name=customer)
+                    salesman_obj = Profile.objects.get(user=request.user)
+                    position_obj = Position.objects.create(
+                        product  =product_obj,
+                        quantity = quantity,
+                        created  = date,
+                    )
+
+                    sale_obj,_ = Sale.objects.get_or_create(
+                        transaction_id=transaction_id,
+                        customer=customer_obj,
+                        salesman=salesman_obj,
+                        created=date,
+                    )
+                    sale_obj.positions.add(position_obj)
+                    sale_obj.save()
+
 
     return HttpResponse()
 
