@@ -11,6 +11,10 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+from sales.models import Sale, Position, CSV
+import csv
+from django.utils.dateparse import parse_date
+
 # Create your views here.
 
 class ReportListView(ListView):
@@ -25,6 +29,22 @@ class UploadTemplateView(TemplateView):
     template_name = "reports/from_file.html"
 
 def csv_upload_view(request):
+    if ( request.method == 'POST'):
+        print(f"{request.FILES.get('file')} is being sent...")
+        csv_file = request.FILES.get('file')
+        obj = CSV.objects.create(file_name=csv_file)
+
+        with open(obj.file_name.path, 'r')as f:
+            reader = csv.DictReader(f,skipinitialspace=True,)
+            for row in reader:
+                print(row,type(row))
+                transaction_id = row["Transaction id"]
+                product        = row["Product"]
+                quantity       = int(row["Quantity"])
+                customer       = row["Customer"]
+                date           = parse_date(row["Date"])
+                print(f"--->{transaction_id}/{product}/{quantity}/{customer}/{date}<----")
+
     return HttpResponse()
 
 def create_report_view(request):
