@@ -34,41 +34,46 @@ class UploadTemplateView(TemplateView):
 def csv_upload_view(request):
     if ( request.method == 'POST'):
         print(f"{request.FILES.get('file')} is being sent...")
+        csv_file_name = request.FILES.get('file').name
         csv_file = request.FILES.get('file')
-        obj = CSV.objects.create(file_name=csv_file)
+        obj, created = CSV.objects.get_or_create(file_name=csv_file_name)
 
-        with open(obj.file_name.path, 'r')as f:
-            reader = csv.DictReader(f,skipinitialspace=True,)
-            for row in reader:
-                transaction_id = row["Transaction id"]
-                product        = row["Product"]
-                quantity       = int(row["Quantity"])
-                customer       = row["Customer"]
-                date           = parse_date(row["Date"])
-                print(f"--->{transaction_id}/{product}/{quantity}/{customer}/{date}<----")
+        
+        if created:
+            obj.csv_file = csv_file
+            obj.save()
+            with open(obj.csv_file.path, 'r')as f:
+                reader = csv.DictReader(f,skipinitialspace=True,)
+                for row in reader:
+                    transaction_id = row["Transaction id"]
+                    product        = row["Product"]
+                    quantity       = int(row["Quantity"])
+                    customer       = row["Customer"]
+                    date           = parse_date(row["Date"])
+                    print(f"--->{transaction_id}/{product}/{quantity}/{customer}/{date}<----")
 
-                try:
-                    product_obj = Product.objects.get(name__iexact=product)
-                except Product.DoesNotExist:
-                    product_obj = None
-                
-                if product_obj is not None:
-                    customer_obj, _ = Customer.objects.get_or_create(name=customer)
-                    salesman_obj = Profile.objects.get(user=request.user)
-                    position_obj = Position.objects.create(
-                        product  =product_obj,
-                        quantity = quantity,
-                        created  = date,
-                    )
+                    try:
+                        product_obj = Product.objects.get(name__iexact=product)
+                    except Product.DoesNotExist:
+                        product_obj = None
+                    
+                    if product_obj is not None:
+                        customer_obj, _ = Customer.objects.get_or_create(name=customer)
+                        salesman_obj = Profile.objects.get(user=request.user)
+                        position_obj = Position.objects.create(
+                            product  =product_obj,
+                            quantity = quantity,
+                            created  = date,
+                        )
 
-                    sale_obj,_ = Sale.objects.get_or_create(
-                        transaction_id=transaction_id,
-                        customer=customer_obj,
-                        salesman=salesman_obj,
-                        created=date,
-                    )
-                    sale_obj.positions.add(position_obj)
-                    sale_obj.save()
+                        sale_obj,_ = Sale.objects.get_or_create(
+                            transaction_id=transaction_id,
+                            customer=customer_obj,
+                            salesman=salesman_obj,
+                            created=date,
+                        )
+                        sale_obj.positions.add(position_obj)
+                        sale_obj.save()
 
 
     return HttpResponse()
