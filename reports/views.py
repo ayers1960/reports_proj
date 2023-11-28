@@ -74,7 +74,9 @@ def csv_upload_view(request):
                         )
                         sale_obj.positions.add(position_obj)
                         sale_obj.save()
-
+                return JsonResponse({'ex' : False})
+        else:
+            return JsonResponse({'ex':True})
 
     return HttpResponse()
 
