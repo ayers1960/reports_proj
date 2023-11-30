@@ -1,9 +1,14 @@
 from django.shortcuts import render
 
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Create your views here.
 from .models import Profile
 from .forms import ProfileForm
 
+@login_required
 def my_profile_view(request):
     profile = Profile.objects.get(user=request.user)
     form = ProfileForm(

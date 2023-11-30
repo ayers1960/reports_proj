@@ -6,8 +6,12 @@ from .forms import SalesSearchForm
 from .utils import get_customer_from_id, get_salesman_from_id, get_chart
 from reports.forms import ReportForm
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Create your views here.
 
+@login_required
 def home_view(request):
     sales_df     = None
     positions_df = None
@@ -78,18 +82,20 @@ def home_view(request):
     }
     return render(request, 'sales/home.html', context)
 
-class SaleListView(ListView):
+class SaleListView(LoginRequiredMixin, ListView):
     model = Sale
     template_name = 'sales/main.html'
 
-class SaleDetailView(DetailView):                                                                                       
+class SaleDetailView(LoginRequiredMixin, DetailView):                                                                                       
     model = Sale
     template_name = 'sales/detail.html'    
 
+@login_required
 def sale_list_view(request):
     qs = Sale.objects.all()
     return render(request, 'sales/main.html', {'object_list':qs})
 
+@login_required
 def sale_detail_view(request, pk):
     obj = Sale.objects.get(pk=pk)
     # or
