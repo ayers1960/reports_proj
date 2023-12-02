@@ -69,6 +69,7 @@ home
    add report 
  </button>
 
+ {% if 1 == 2 %}
  <div class="d-grid gap-2">
   <a href="/reports/" class="btn btn-secondary btn-sm" role="button">Reports</a>
   </div>
@@ -80,5 +81,5 @@ home
   <div class="d-grid gap-2">
     <a href="/my_profile/" class="btn btn-secondary btn-sm" role="button">Profile</a>
     </div>
-      
+{% endif %}
 {% endblock content %}
