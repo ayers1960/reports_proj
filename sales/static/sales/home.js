@@ -42,9 +42,9 @@ reportBtn.addEventListener('click', ()=>{
             url:  'reports/save/',
             data: formData,
             success: function(response){
-                handleAlerts('success',"report created")
-                console.log("SUCCESS:")                
-                console.log(response);
+                reportForm.reset();
+                console.log("report created success:");                
+                handleAlerts('success',"report created");
             },
             error: function(response){
                 console.log("ERROR:")
